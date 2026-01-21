@@ -2,26 +2,16 @@
 
 # Extracting Individual Streams from Multi-Camera Recordings
 
+
+In my work with broadcasters, legal archiving, and lecture capture, I often encounter hardware encoders (such as the Epiphan Pearl series) that bundle multiple camera angles into a single `.mp4` or `.mov` file.
 In this guide, I’ll walk you through the methodology I use for extracting separate video and audio feeds from a single multi-stream container file.
-
-## The Scenario
-
-In my work with professional broadcasting, legal archiving, and lecture capture, I often encounter hardware encoders (such as the Epiphan Pearl series) that bundle multiple camera angles into a single `.mp4` or `.mov` file.
 
 To the untrained eye—or a standard media player like QuickTime—this looks like a standard video file displaying only the primary camera feed. However, beneath the surface, the file acts as a digital container holding distinct streams for every camera and microphone connected to the device.
 
 The challenge is extracting these "buried" angles into standalone files for editing or review, without suffering the quality loss or time penalty of re-encoding.
 
-## The Solution
+I leverage `ffmpeg` to surgically map each internal stream to a distinct output file. Crucially, I use the stream copy function, which copies the video data bit-for-bit rather than re-compressing it. This ensures the process is instantaneous and mathematically identical to the source.
 
-I utilise `ffmpeg` to surgically map each internal stream to a distinct output file. Crucially, I use the stream copy function, which copies the video data bit-for-bit rather than re-compressing it. This ensures the process is instantaneous and mathematically identical to the source.
-
-### Prerequisites
-
-* **FFmpeg**: Ensure you have a recent version installed (Version 7.0 or higher is recommended for modern hardware acceleration support).
-* **Terminal/Command Line access**.
-
-### The Command
 
 In this example, let's assume we have a source file named `recording_raw.mp4` which contains four video inputs but only three active audio tracks.
 
@@ -33,7 +23,7 @@ ffmpeg -i "recording_raw.mp4" \
   -map 0:v:3 -c copy "output_camera_4.mp4"
 ```
 
-### Breakdown
+Let's break that down:
 
 * `-i "filename.mp4"`: The input file. **Note:** I always enclose filenames in quotes if they contain spaces to prevent parsing errors.
 * `-map 0:v:0`: Selects the **first** video track from the **first** input file.
@@ -59,3 +49,6 @@ If your command fails, it is usually due to one of two reasons:
 
 1.  **The Space Character:** The command line interprets a space as the end of a filename. Ensure your input is `"wrapped in quotes"` or escaped with a backslash `\`.
 2.  **The Ghost Stream:** You cannot map what does not exist. Use `ffmpeg -i filename.mp4` simply to inspect the file metadata first. If the output lists `Stream #0:5` as your final stream, do not attempt to map index `6` or higher.
+
+Hope this helps.
+</JV>
