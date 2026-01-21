@@ -1,2 +1,61 @@
-# Extracting-Individual-Streams-from-Multi-Camera-Recordings
-Extracting Individual Streams from Multi-Camera Recordings
+# DRAFT #
+
+# Extracting Individual Streams from Multi-Camera Recordings
+
+This repository documents the methodology for extracting separate video and audio feeds from a single multi-stream container file.
+
+## The Scenario
+
+In professional broadcasting, legal archiving, and lecture capture, hardware encoders (such as the Epiphan Pearl series) often bundle multiple camera angles into a single `.mp4` or `.mov` file.
+
+To the untrained eye—or a standard media player like QuickTime—this appears to be a standard video file displaying only the primary camera feed. However, beneath the surface, the file acts as a digital container holding distinct streams for every camera and microphone connected to the device.
+
+The challenge lies in extracting these "buried" angles into standalone files for editing or review, without suffering the quality loss or time penalty of re-encoding.
+
+## The Solution
+
+We'll use `ffmpeg` to surgically map each internal stream to a distinct output file. Crucially, we use the stream copy function, which copies the video data bit-for-bit rather than re-compressing it. This ensures the process is instantaneous and mathematically identical to the source.
+
+### Prerequisites
+
+* **FFmpeg**: Ensure you have a recent version installed (Version 7.0 or higher is recommended for modern hardware acceleration support).
+* **Terminal/Command Line access**.
+
+### The Command
+
+In this example, we take a source file named `courtroom_session_raw.mp4` which contains four video inputs but only three active audio tracks.
+
+```bash
+ffmpeg -i "courtroom_session_raw.mp4" \
+  -map 0:v:0 -map 0:a:0 -c copy "angle_1_witness.mp4" \
+  -map 0:v:1 -map 0:a:1 -c copy "angle_2_judge.mp4" \
+  -map 0:v:2 -map 0:a:2 -c copy "angle_3_evidence.mp4" \
+  -map 0:v:3 -c copy "angle_4_overview.mp4"
+```
+
+### Breakdown of Arguments
+
+* `-i "filename.mp4"`: The input file. **Note:** Always enclose filenames in quotes if they contain spaces to prevent parsing errors.
+* `-map 0:v:0`: Selects the **first** video track from the **first** input file.
+* `-map 0:a:0`: Selects the **first** audio track from the **first** input file.
+* `-c copy`: The codec is set to "copy". This skips the encoding process entirely, resulting in near-instant extraction.
+* `output_name.mp4`: The destination file for that specific map pair.
+
+**Note on Stream Mismatches:**
+In the command above, you will notice the fourth output (`angle_4_overview.mp4`) does not possess a mapped audio track (`-map 0:a:3`). This is deliberate. Hardware recorders often capture video on all inputs but may not have active microphones connected to every channel. Attempting to map a non-existent audio stream will cause FFmpeg to abort the entire operation.
+
+## Use Cases
+
+Where might one encounter this specific architecture?
+
+1.  **Judicial Proceedings:** Modern courtrooms may record the judge, witness, defendant, and evidence presentation simultaneously. These must be separated for transcription or public record requests.
+2.  **University Lecture Capture:** A lecture hall recording often captures the professor (Camera A) and the slide deck/projector feed (Camera B) into a single container.
+3.  **Esports & Gaming:** High-end capture setups may record the gameplay feed and the player's "face-cam" as separate tracks within one file to simplify synchronisation during post-production.
+4.  **Security Surveillance:** 360-degree cameras or multi-sensor units often output a single file containing distinct quadrants that require separation for forensic analysis.
+
+## Troubleshooting
+
+If your command fails, it is usually due to one of two reasons:
+
+1.  **The Space Character:** The command line interprets a space as the end of a filename. Ensure your input is `"wrapped in quotes"` or escaped with a backslash `\`.
+2.  **The Ghost Stream:** You cannot map what does not exist. Use `ffmpeg -i filename.mp4` simply to inspect the file metadata first. If the output lists `Stream #0:5` as your final stream, do not attempt to map index `6` or higher.
