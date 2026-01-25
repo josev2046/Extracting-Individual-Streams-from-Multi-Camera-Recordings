@@ -17,3 +17,73 @@ This method is invaluable in scenarios such as judicial proceedings, university 
 
 Hope this helps.
 </JV>
+
+---
+
+# Unlocking Hidden Streams: Extracting Individual Angles from Multi-Camera Recordings
+
+If you work in broadcasting, archiving, or AV support, you have likely encountered a specific type of video file that looks normal on the surface but behaves oddly. You play it in standard players, and you see a single video feed. However, the file size is massive, and the metadata suggests there is more going on under the bonnet.
+
+This is common with certain hardware encoders used in professional environments. To save on file management, these devices bundle multiple camera angles and microphone inputs into a single "container" file.
+
+The problem is that standard video players usually only recognise the primary track. The other angles—perhaps a wide shot of a courtroom or a presentation slide feed—are technically there, sitting inside the file, but they are inaccessible for editing or review.
+
+You *could* re-encode the file to separate them, but that takes ages and degrades the picture quality. A much better solution is to use FFmpeg to extract the streams.
+
+To understand the fix, you have to understand the file. Think of a video file not as a single photo, but as a digital rucksack (the **container**). Inside that rucksack, you can pack multiple items: distinct video reels, several audio tapes, and subtitle tracks (the **streams**).
+
+Most players just look in the main pocket and ignore the side pockets. We need a way to reach into the side pockets and pull those extra items out into their own separate rucksacks.
+
+We do this using a process called **Stream Copying**.
+
+We use the "copy" function for this work. It tells the software: *"Don't look at the video data, don't compress it, and don't change it. Just move it from File A to File B."*
+
+Because the computer isn't doing any heavy mathematics to redraw the image (transcoding), the process is:
+
+* **Instantaneous:** It runs as fast as your hard drive can write data.
+* **Lossless:** The output is mathematically identical to the source.
+
+
+Let’s look at a real-world scenario. You have a source file containing:
+
+* **4 Video inputs** (Camera 1, Camera 2, Camera 3, Camera 4)
+* **3 Audio inputs** (Mics for Cameras 1-3, but Camera 4 is silent)
+
+We want to split these into four separate files so an editor can work with them easily.
+
+We use the map flag to tell the software which specific stream goes to which output file.
+
+[INSERT COMMAND PLACEHOLDER HERE]
+
+Let's break it down:
+
+* **Input:** This selects your source file.
+* **Map 0:v:0:** This creates a map from Input 0, Video Track 0.
+* **Map 0:a:0:** This maps Input 0, Audio Track 0.
+* **Copy:** This copies the data without re-encoding.
+* **Output:** The destination file.
+
+You simply repeat this block for every angle you want to extract.
+
+**Note on the fourth stream:** In our example, the fourth camera didn't have a corresponding microphone. If we tried to map an audio track that doesn't exist, the software would throw an error and stop. Therefore, for the fourth output line, we only map the video.
+
+Where is this useful? This workflow is standard practice in several sectors where synchronised recording is mandatory but separated playback is required later:
+
+1.  **Judicial Proceedings:** Courts often record the judge, the witness stand, and the defendant simultaneously. Transcribers need to isolate the witness mic, while the legal team might need to view the defendant's reaction.
+2.  **University Lectures:** Lecture capture hardware often bundles the camera pointed at the professor with the direct feed of their PowerPoint slides. Students need to see both, but they are often recorded as separate streams in one file.
+3.  **Esports:** In competitive gaming, you might record the "Programme" feed (what the audience sees) alongside individual "Observer" feeds for each player to use in highlights later.
+
+## Troubleshooting
+
+If you are trying this and it isn't working, check these three things:
+
+**1. Check the map first**
+Before you run the extraction, run a simple check command to see what is actually inside your file. This ensures you don't try to map a "ghost stream" that doesn't exist.
+
+[INSERT CHECK COMMAND PLACEHOLDER HERE]
+
+**2. Mind the spaces**
+If your filename contains spaces, the command line will get confused. Always wrap your filenames in double quotes.
+
+**3. Silent tracks**
+As mentioned in the example, ensure you aren't asking for audio tracks that aren't there. If a camera feed is silent, just map the video.
