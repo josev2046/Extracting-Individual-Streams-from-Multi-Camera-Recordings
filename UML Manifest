@@ -1,0 +1,36 @@
+@startuml
+skinparam style strictuml
+title Extracting Individual Streams via Stream Copy
+
+actor "Archivist / Editor" as User
+participant "Multi-Cam Source\n(Container)" as Source
+participant "FFmpeg\n(Engine)" as Engine
+participant "Output File 1\n(Camera 1)" as Out1
+participant "Output File 2\n(Camera 2)" as Out2
+
+User -> Engine: Execute Command\n(-i source.mp4 -map 0:v:0... -c copy)
+
+group Inspection Phase
+    Engine -> Source: Read File Header
+    Source --> Engine: Return Stream List (v:0, v:1, a:0, a:1...)
+    Engine -> Engine: Validate Stream Maps
+end
+
+group Extraction Phase (Stream Copy)
+    note right of Engine: **Crucial Step:** \nPackets are copied bit-for-bit.\nNo decoding or re-encoding occurs.
+
+    par Parallel Stream Mapping
+        loop For every packet in Stream 1
+            Engine -> Source: Read Packet (Video 0 + Audio 0)
+            Engine -> Out1: Write Packet
+        end
+
+        loop For every packet in Stream 2
+            Engine -> Source: Read Packet (Video 1 + Audio 1)
+            Engine -> Out2: Write Packet
+        end
+    end
+end
+
+Engine -> User: Process Complete (Lossless)
+@enduml
