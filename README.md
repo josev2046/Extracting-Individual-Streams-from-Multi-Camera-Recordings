@@ -51,27 +51,30 @@ Let’s look at a real-world scenario. You have a source file containing:
 
 We want to split these into four separate files so an editor can work with them easily.
 
-We use the map flag to tell the software which specific stream goes to which output file.
+We use the map flag to tell the software which specific stream goes to which output file:
 
-[INSERT COMMAND PLACEHOLDER HERE]
+<img width="845" height="655" alt="image" src="https://github.com/user-attachments/assets/1f7f1fb1-7ac2-4bd7-9ea1-0a47fb5bc628" />
+
+```bash
+ffmpeg -i "recording_raw.mp4" \
+ -map 0:v:0 -map 0:a:0 -c copy "output_camera_1.mp4" \
+ -map 0:v:1 -map 0:a:1 -c copy "output_camera_2.mp4" \
+ -map 0:v:2 -map 0:a:2 -c copy "output_camera_3.mp4" \
+ -map 0:v:3 -c copy "output_camera_4.mp4"
+```
 
 Let's break it down:
 
-* **Input:** This selects your source file.
-* **Map 0:v:0:** This creates a map from Input 0, Video Track 0.
-* **Map 0:a:0:** This maps Input 0, Audio Track 0.
-* **Copy:** This copies the data without re-encoding.
-* **Output:** The destination file.
+* **`Input`:** This selects your source file.
+* **`Map 0:v:0`:** This creates a map from Input 0, Video Track 0.
+* **`Map 0:a:0`:** This maps Input 0, Audio Track 0.
+* **`Copy`:** This copies the data without re-encoding.
+* **`Output`:** The destination file.
 
 You simply repeat this block for every angle you want to extract.
 
 **Note on the fourth stream:** In our example, the fourth camera didn't have a corresponding microphone. If we tried to map an audio track that doesn't exist, the software would throw an error and stop. Therefore, for the fourth output line, we only map the video.
 
-Where is this useful? This workflow is standard practice in several sectors where synchronised recording is mandatory but separated playback is required later:
-
-1.  **Judicial proceedings:** Courts often record the judge, the witness stand, and the defendant simultaneously. Transcribers need to isolate the witness mic, while the legal team might need to view the defendant's reaction.
-2.  **University lectures:** Lecture capture hardware often bundles the camera pointed at the professor with the direct feed of their PowerPoint slides. Students need to see both, but they are often recorded as separate streams in one file.
-3.  **Esports:** In competitive gaming, you might record the "Programme" feed (what the audience sees) alongside individual "Observer" feeds for each player to use in highlights later.
 
 ## Troubleshooting
 
@@ -80,7 +83,7 @@ If you are trying this and it isn't working, check these three things:
 **1. Check the map first**
 Before you run the extraction, run a simple check command to see what is actually inside your file. This ensures you don't try to map a "ghost stream" that doesn't exist.
 
-[INSERT CHECK COMMAND PLACEHOLDER HERE]
+`ffmpeg -i "recording_raw.mp4"`
 
 **2. Mind the spaces**
 If your filename contains spaces, the command line will get confused. Always wrap your filenames in double quotes.
