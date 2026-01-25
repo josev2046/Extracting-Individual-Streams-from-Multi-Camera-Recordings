@@ -20,7 +20,7 @@ Hope this helps.
 
 ---
 
-# Unlocking Hidden Streams: Extracting Individual Angles from Multi-Camera Recordings
+# Unlocking hidden streams: extracting individual angles from multi-camera recordings
 
 If you work in broadcasting, archiving, or AV support, you have likely encountered a specific type of video file that looks normal on the surface but behaves oddly. You play it in standard players, and you see a single video feed. However, the file size is massive, and the metadata suggests there is more going on under the bonnet.
 
@@ -69,8 +69,8 @@ You simply repeat this block for every angle you want to extract.
 
 Where is this useful? This workflow is standard practice in several sectors where synchronised recording is mandatory but separated playback is required later:
 
-1.  **Judicial Proceedings:** Courts often record the judge, the witness stand, and the defendant simultaneously. Transcribers need to isolate the witness mic, while the legal team might need to view the defendant's reaction.
-2.  **University Lectures:** Lecture capture hardware often bundles the camera pointed at the professor with the direct feed of their PowerPoint slides. Students need to see both, but they are often recorded as separate streams in one file.
+1.  **Judicial proceedings:** Courts often record the judge, the witness stand, and the defendant simultaneously. Transcribers need to isolate the witness mic, while the legal team might need to view the defendant's reaction.
+2.  **University lectures:** Lecture capture hardware often bundles the camera pointed at the professor with the direct feed of their PowerPoint slides. Students need to see both, but they are often recorded as separate streams in one file.
 3.  **Esports:** In competitive gaming, you might record the "Programme" feed (what the audience sees) alongside individual "Observer" feeds for each player to use in highlights later.
 
 ## Troubleshooting
