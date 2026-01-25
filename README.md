@@ -3,7 +3,7 @@
 
 In my daily SA engagements with broadcasters, and archivists, I often come across hardware encoders that bundle multiple camera angles into a single container. While standard players like QuickTime would display the primary feed, the file actually serves as a digital vessel holding distinct streams for every connected camera and microphone. The challenge lies in extracting these "buried" angles for editing or review without incurring the quality loss or significant time penalties associated with re-encoding. To solve this, we can use ffmpeg to surgically map each internal stream to a distinct output file using the stream copy function (-c copy), which transfers data bit-for-bit to ensure the process is instantaneous and mathematically identical to the source.
 
-For a practical example, consider a source file named recording_raw.mp4 containing four video inputs but only three active audio tracks. I would use the command ffmpeg -i "recording_raw.mp4" -map 0:v:0 -map 0:a:0 -c copy "output_camera_1.mp4" ..., repeating the mapping for each pair while omitting the audio map for the fourth silent stream to prevent errors.
+For a practical example, consider a source file named `recording_raw.mp4` containing four video inputs but only three active audio tracks. I would use the command `ffmpeg -i "recording_raw.mp4" -map 0:v:0 -map 0:a:0 -c copy "output_camera_1.mp4" ...`, repeating the mapping for each pair while omitting the audio map for the fourth silent stream to prevent errors.
 
 ```bash
 ffmpeg -i "recording_raw.mp4" \
@@ -38,7 +38,7 @@ We do this using a process called **Stream Copying**.
 
 We use the "copy" function for this work. It tells the software: *"Don't look at the video data, don't compress it, and don't change it. Just move it from File A to File B."*
 
-Because the computer isn't doing any heavy mathematics to redraw the image (transcoding), the process is:
+Because the computer isn't doing any heavy maths to redraw the image (transcoding), the process is:
 
 * **Instantaneous:** It runs as fast as your hard drive can write data.
 * **Lossless:** The output is mathematically identical to the source.
@@ -56,11 +56,11 @@ We use the map flag to tell the software which specific stream goes to which out
 <img width="845" height="655" alt="image" src="https://github.com/user-attachments/assets/1f7f1fb1-7ac2-4bd7-9ea1-0a47fb5bc628" />
 
 ```bash
-ffmpeg -i "recording_raw.mp4" \
- -map 0:v:0 -map 0:a:0 -c copy "output_camera_1.mp4" \
- -map 0:v:1 -map 0:a:1 -c copy "output_camera_2.mp4" \
- -map 0:v:2 -map 0:a:2 -c copy "output_camera_3.mp4" \
- -map 0:v:3 -c copy "output_camera_4.mp4"
+ffmpeg -i "recording_raw." \
+ -map 0:v:0 -map 0:a:0 -c copy "output_camera_1." \
+ -map 0:v:1 -map 0:a:1 -c copy "output_camera_2." \
+ -map 0:v:2 -map 0:a:2 -c copy "output_camera_3." \
+ -map 0:v:3 -c copy "output_camera_4."
 ```
 
 Let's break it down:
@@ -83,7 +83,7 @@ If you are trying this and it isn't working, check these three things:
 **1. Check the map first**
 Before you run the extraction, run a simple check command to see what is actually inside your file. This ensures you don't try to map a "ghost stream" that doesn't exist.
 
-`ffmpeg -i "recording_raw.mp4"`
+`ffmpeg -i "recording_raw."`
 
 **2. Mind the spaces**
 If your filename contains spaces, the command line will get confused. Always wrap your filenames in double quotes.
