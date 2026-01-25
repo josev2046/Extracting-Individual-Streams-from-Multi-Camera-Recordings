@@ -34,14 +34,12 @@ To understand the fix, you have to understand the file. Think of a video file no
 
 Most players just look in the main pocket and ignore the side pockets. We need a way to reach into the side pockets and pull those extra items out into their own separate rucksacks.
 
-We do this using a process called **Stream Copying**.
+We do this using a process called **stream copying**.
 
 We use the "copy" function for this work. It tells the software: *"Don't look at the video data, don't compress it, and don't change it. Just move it from File A to File B."*
 
-Because the computer isn't doing any heavy maths to redraw the image (transcoding), the process is:
-
-* **Instantaneous:** It runs as fast as your hard drive can write data.
-* **Lossless:** The output is mathematically identical to the source.
+Because the computer isn't doing any heavy maths to redraw the image (transcoding), the process is both **instantaneous:** (it runs as fast as your hard drive can write data)
+and **lossless:** (the output is mathematically identical to the source.)
 
 
 Let’s look at a real-world scenario. You have a source file containing:
@@ -51,30 +49,30 @@ Let’s look at a real-world scenario. You have a source file containing:
 
 We want to split these into four separate files so an editor can work with them easily.
 
-We use the map flag to tell the software which specific stream goes to which output file:
-
 <img width="845" height="655" alt="image" src="https://github.com/user-attachments/assets/1f7f1fb1-7ac2-4bd7-9ea1-0a47fb5bc628" />
 
+We use the map flag to tell the software which specific stream goes to which output file:
+
 ```bash
-ffmpeg -i "recording_raw." \
- -map 0:v:0 -map 0:a:0 -c copy "output_camera_1." \
- -map 0:v:1 -map 0:a:1 -c copy "output_camera_2." \
- -map 0:v:2 -map 0:a:2 -c copy "output_camera_3." \
- -map 0:v:3 -c copy "output_camera_4."
+ffmpeg -i "recording_raw.mp4" \
+ -map 0:v:0 -map 0:a:0 -c copy "output_camera_1.mp4" \
+ -map 0:v:1 -map 0:a:1 -c copy "output_camera_2.mp4" \
+ -map 0:v:2 -map 0:a:2 -c copy "output_camera_3.mp4" \
+ -map 0:v:3 -c copy "output_camera_4.mp4"
 ```
+
 
 Let's break it down:
 
-* **`Input`:** This selects your source file.
-* **`Map 0:v:0`:** This creates a map from Input 0, Video Track 0.
-* **`Map 0:a:0`:** This maps Input 0, Audio Track 0.
-* **`Copy`:** This copies the data without re-encoding.
-* **`Output`:** The destination file.
+* **`-i` (Input):** This selects your source file.
+* **`-map 0:v:0`:** This creates a map from Input 0, Video Track 0.
+* **`-map 0:a:0`:** This maps Input 0, Audio Track 0.
+* **`-c copy`:** This copies the data without re-encoding.
+* **Output Name:** The destination file (e.g., `output_camera_1.mp4`).
 
 You simply repeat this block for every angle you want to extract.
 
 **Note on the fourth stream:** In our example, the fourth camera didn't have a corresponding microphone. If we tried to map an audio track that doesn't exist, the software would throw an error and stop. Therefore, for the fourth output line, we only map the video.
-
 
 ## Troubleshooting
 
@@ -82,8 +80,7 @@ If you are trying this and it isn't working, check these three things:
 
 **1. Check the map first**
 Before you run the extraction, run a simple check command to see what is actually inside your file. This ensures you don't try to map a "ghost stream" that doesn't exist.
-
-`ffmpeg -i "recording_raw."`
+`ffmpeg -i "recording_raw.mp4"`
 
 **2. Mind the spaces**
 If your filename contains spaces, the command line will get confused. Always wrap your filenames in double quotes.
