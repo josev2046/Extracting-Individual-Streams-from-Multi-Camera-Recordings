@@ -20,7 +20,7 @@ Hope this helps.
 
 ---
 
-# Unlocking hidden streams: extracting individual angles from multi-camera recordings
+# Unlocking hidden streams with FFmpeg
 
 If you work in broadcasting, archiving, or AV support, you have likely encountered a specific type of video file that looks normal on the surface but behaves oddly. You play it in standard players, and you see a single video feed. However, the file size is massive, and the metadata suggests there is more going on under the bonnet.
 
