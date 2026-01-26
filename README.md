@@ -22,6 +22,9 @@ Hope this helps.
 
 # Unlocking hidden streams with FFmpeg
 
+[![DOI](https://zenodo.org/badge/1139248644.svg)](https://doi.org/10.5281/zenodo.18374984)
+
+
 If you work in broadcasting, archiving, or AV support, you have likely encountered a specific type of video file that looks normal on the surface but behaves oddly. You play it in standard players, and you see a single video feed. However, the file size is massive, and the metadata suggests there is more going on under the bonnet.
 
 This is common with certain hardware encoders used in professional environments. To save on file management, these devices bundle multiple camera angles and microphone inputs into a single "container" file.
